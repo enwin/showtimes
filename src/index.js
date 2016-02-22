@@ -70,7 +70,7 @@ class showtimes {
       })
 
       // No pages to paginate, so return the theaters back.
-      if ($('#navbar td a:contains("Next")').length === 0 || api.page === api.pageLimit) {
+      if ($('#navbar td:last-child a').length === 0 || api.page === api.pageLimit) {
         cb(null, api.theaters)
         return
       }
@@ -155,7 +155,7 @@ class showtimes {
       })
 
       // No pages to paginate, so return the movies back.
-      if ($('#navbar td a:contains("Next")').length === 0 || api.page === api.pageLimit) {
+      if ($('#navbar td:last-child a').length === 0 || api.page === api.pageLimit) {
         cb(null, api.movies)
         return
       }
