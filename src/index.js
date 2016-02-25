@@ -16,6 +16,7 @@ class showtimes {
     this.userAgent = 'showtimes (http://github.com/erunion/showtimes)'
     this.baseUrl = 'http://google.com/movies'
     this.location = location
+    this.ReAmPm = /(am|pm)/
 
     // Handle available options
     if (typeof options === 'undefined') {
@@ -407,26 +408,63 @@ class showtimes {
     var showtime, match
     var meridiem = false
 
+    var times = thing.find('.times'),
+        timeSpans = Array.prototype.slice.call( times.find('.times > span') ),
+        timesContent = times.contents(),
+        showtimes = [],
+        showtime,
+        catShow;
+
     // Google displays showtimes like "10:00  11:20am  1:00  2:20  4:00  5:10  6:50  8:10  9:40  10:55pm". Since
     // they don't always apply am/pm to times, we need to run through the showtimes in reverse and then apply the
     // previous (later) meridiem to the next (earlier) movie showtime so we end up with something like
     // ["10:00am", "11:20am", "1:00pm", ...].
-    var showtimes = thing.find('.times').text().split(' ')
-    showtimes = showtimes.reverse()
-    for (let x in showtimes) {
-      showtime = this._removeNonAsciiCharacters(showtimes[x]).trim()
+    timeSpans.reverse().forEach( span => {
+      showtime = this._removeNonAsciiCharacters( cheerio( span ).text() ).trim();
 
-      match = showtime.match(/(am|pm)/)
+      match = showtime.match( this.ReAmPm )
+
       if (match) {
         meridiem = match[0]
       } else if (meridiem) {
         showtime += meridiem
       }
 
-      showtimes[x] = showtime
+      cheerio( span ).text( showtime );
+
+    } )
+
+    // get showtimes
+    timesContent.each( ( index, showtime ) => {
+      // handle showtime info of the movie
+      if( showtime.data || !index ){
+        catShow = {
+          info: showtime.data ? showtime.data.trim() : 'all',
+          times: showtime.data ? [] : [ cheerio( showtime ).text().trim() ]
+        }
+        return;
+      }
+
+      if( showtime.name === 'br' ){
+        showtimes.push( catShow );
+        return;
+      }
+
+      if( showtime.name != 'br' ){
+        if( catShow ){
+          catShow.times.push( cheerio( showtime ).text().trim() );
+        } else{
+          showtimes.push( cheerio( showtime ).text().trim() );
+        }
+      }
+    } );
+
+    // if theres a cat and the loop is over update the showtimes with the last cat
+    if( catShow ){
+      showtimes.push( catShow );
     }
 
-    return showtimes.reverse()
+    return showtimes;
   }
 
   /**
