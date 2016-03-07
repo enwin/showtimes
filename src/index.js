@@ -148,8 +148,13 @@ class showtimes {
         delete movieData.showtimes
         movieData.theaters = []
 
+        var theater;
         movie.find('.showtimes .theater').each((j, theater) => {
-          movieData.theaters.push(api._parseTheater($, $(theater), true))
+          theater = api._parseTheater($, $(theater), true);
+          if( !theater.id ){
+            return;
+          }
+          movieData.theaters.push( theater )
         })
 
         api.movies.push(movieData)
@@ -189,8 +194,13 @@ class showtimes {
       delete movieData.showtimes
       movieData.theaters = []
 
+      var theater;
       movie.find('.showtimes .theater').each((j, theater) => {
-        movieData.theaters.push(api._parseTheater($, $(theater), true))
+        theater = api._parseTheater($, $(theater), true);
+        if( !theater.id ){
+          return;
+        }
+        movieData.theaters.push( theater )
       })
 
       cb(null, movieData)
