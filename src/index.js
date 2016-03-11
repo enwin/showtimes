@@ -326,14 +326,14 @@ class showtimes {
     }
 
     var runtime, rating, genre
-    if (info[0].match(/(hr |min)/)) {
+    if (info[0].match(/(\dh|\dm)/)) {
       runtime = this._removeNonAsciiCharacters(info[0].trim())
       if (!info[1]) {
         info[1] = ''
       }
 
-      if (info[1].match(/Rated/)) {
-        rating = this._removeNonAsciiCharacters(info[1].replace(/Rated/, '').trim())
+      if (info[2]) {
+        rating = this._removeNonAsciiCharacters(info[1].split( ' ' ).slice( 1 ).join(' ').trim())
         if (typeof info[2] !== 'undefined') {
           if (info[2].match(/(IMDB|Trailer)/i)) {
             genre = false
