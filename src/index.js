@@ -242,7 +242,8 @@ class showtimes {
       }
     }
 
-    var info = theater.find('.desc .info').text().split(' - ')
+    var info = theater.find('.desc .info').text().split(' - '),
+        falsePhone = info[1] && info[1].indexOf( ',' ) > -1;
 
     if (alternate) {
       var showtimes = api._parseShowtimes($(theater))
@@ -266,8 +267,8 @@ class showtimes {
     return {
       id: theaterId,
       name: theater.find('.desc h2.name').text(),
-      address: info[0] ? info[0].trim() : '',
-      phoneNumber: info[1] ? info[1].trim() : '',
+      address: falsePhone ? info.join(' - ') : info[0] ? info[0].trim() : '',
+      phoneNumber: !falsePhone && info[1] ? info[1].trim() : '',
       movies: movies
     }
   }
