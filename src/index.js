@@ -448,7 +448,7 @@ class showtimes {
     // get showtimes
     timesContent.each( ( index, showtime ) => {
       // handle showtime info of the movie
-      if( showtime.data || !index ){
+      if( showtime.data || !catShow ){
         catShow = {
           info: showtime.data ? showtime.data.trim() : 'all',
           times: showtime.data ? [] : [ cheerio( showtime ).text().trim() ]
@@ -458,15 +458,14 @@ class showtimes {
 
       if( showtime.name === 'br' ){
         showtimes.push( catShow );
+        catShow = null;
         return;
       }
 
-      if( showtime.name != 'br' ){
-        if( catShow ){
-          catShow.times.push( cheerio( showtime ).text().trim() );
-        } else{
-          showtimes.push( cheerio( showtime ).text().trim() );
-        }
+      if( catShow ){
+        catShow.times.push( cheerio( showtime ).text().trim() );
+      } else{
+        showtimes.push( cheerio( showtime ).text().trim() );
       }
     } );
 
