@@ -56,7 +56,7 @@ class showtimes {
       }
 
       var $ = cheerio.load(response)
-      if ($('.theater').length === 0) {
+      if (this.page === 1 && $('.theater').length === 0) {
         cb($('#results').text())
         return
       }
@@ -132,7 +132,7 @@ class showtimes {
       }
 
       var $ = cheerio.load(response)
-      if ($('.movie').length === 0) {
+      if (this.page === 1 && $('.movie').length === 0) {
         cb($('#results').text())
         return
       }
